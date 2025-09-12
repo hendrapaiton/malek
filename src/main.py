@@ -1,38 +1,44 @@
-from dataclasses import dataclass
-
 import flet as ft
-
-
-@dataclass
-class AppState:
-    count: int
-
-    def increment(self):
-        self.count += 1
+from views.register_page import register_view
+from views.chatbot_page import chatbot_view
 
 
 def main(page: ft.Page):
-    state = AppState(count=0)
+    page.title = "Multi-Page App"
+    page.theme_mode = ft.ThemeMode.LIGHT
 
-    text = ft.Text(value=f"{state.count}", size=50)
-
-    def increment(e):
-        state.increment()
-        text.value = f"{state.count}"
+    def route_change(e):
+        page.views.clear()
+        if page.route == "/register":
+            page.views.append(
+                ft.View(
+                    "/register",
+                    [
+                        ft.AppBar(title=ft.Text("Register"), bgcolor=ft.Colors.BLUE),
+                        ft.SafeArea(register_view(page), expand=True),
+                    ],
+                )
+            )
+        elif page.route == "/chatbot":
+            page.views.append(
+                ft.View(
+                    "/chatbot",
+                    [
+                        ft.AppBar(title=ft.Text("Chatbot"), bgcolor=ft.Colors.BLUE),
+                        ft.SafeArea(chatbot_view(page), expand=True),
+                    ],
+                )
+            )
         page.update()
 
-    page.floating_action_button = ft.FloatingActionButton(
-        icon=ft.Icons.ADD, on_click=increment
-    )
-    page.add(
-        ft.SafeArea(
-            ft.Container(
-                text,
-                alignment=ft.Alignment.CENTER,
-            ),
-            expand=True,
-        )
-    )
+    def view_pop(e):
+        page.views.pop()
+        top_view = page.views[-1]
+        page.go(top_view.route)
+
+    page.on_route_change = route_change
+    page.on_view_pop = view_pop
+    page.go("/register")
 
 
 ft.run(main, view=ft.AppView.WEB_BROWSER, port=8080)
