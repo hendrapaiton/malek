@@ -1,3 +1,6 @@
-flet >=0.70.0.dev0
-sqlalchemy >=2.0.0
+flet ==0.70.0.dev5620
 python-dotenv >=1.0.0
+
+supabase
+openai
+mcp
