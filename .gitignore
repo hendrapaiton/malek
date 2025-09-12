@@ -221,3 +221,4 @@ lib64
 hello.py
 entrypoint.sh
 pyvenv.cfg
+tester.py
